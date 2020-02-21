@@ -1,0 +1,246 @@
+﻿@model WebApp.Areas.Members.ViewModels.Portfolio.Pages.PortfolioPageViewModel
+@{
+    ViewData["Title"] = "Portfolios";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+
+    var pageTitle = (string)ViewData["pageTitle"];
+    var errorMessage = TempData["ErrorMessage"];
+    var successMessage = TempData["SuccessMessage"];
+
+    var formColSize = (Model.FormIsReadonly) ? "col-md-6" : "col-md-10";
+}
+
+<h1 class="h3 mb-4 text-gray-800">@pageTitle</h1>
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@if (successMessage != null)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<div class="row">
+    <div class="@formColSize">
+        <form asp-area="Members" asp-controller="Portfolio" asp-action="Save" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="control-label">Profile for</label>
+                <div class="input-group">
+                    <select asp-for="CreateForm.PortfolioTypeId" class="form-control col-md-10">
+                        <option>- Select Profile -</option>
+                        @foreach (var type in Model.PortfolioTypes)
+                        {
+                            <option value="@type.Id">@type.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CreateForm.PortfolioTypeId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group profilename @(string.IsNullOrWhiteSpace(Model.CreateForm.FullName) ? "hide" : "show")">
+                <label asp-for="CreateForm.FullName" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="CreateForm.FullName" type="text" class="col-md-10 form-control" />
+                    <span asp-validation-for="CreateForm.FullName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreateForm.Gender" class="control-label"></label>
+                <div class="input-group">
+                    <select asp-for="CreateForm.Gender" class="form-control col-md-10">
+                        <option>- Select Profile -</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                    <span asp-validation-for="CreateForm.Gender" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreateForm.BirthDate" class="control-label"></label>
+                <div class="input-group date" data-target-input="nearest">
+                    <input asp-for="CreateForm.BirthDate" id="memberbirthdate" type="text" class="col-md-10 form-control" />
+                    <span asp-validation-for="CreateForm.BirthDate" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreateForm.Profession" class="control-label"></label>
+                <div class="input-group date" data-target-input="nearest">
+                    <input asp-for="CreateForm.Profession" id="memberbirthdate" type="text" class="col-md-10 form-control" />
+                    <span asp-validation-for="CreateForm.Profession" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreateForm.Location" class="control-label"></label>
+                <div class="input-group date" data-target-input="nearest">
+                    <input asp-for="CreateForm.Location" id="memberbirthdate" type="text" class="col-md-10 form-control" />
+                    <span asp-validation-for="CreateForm.Location" class="text-danger"></span>
+                </div>
+            </div>
+
+            <input type="hidden" asp-for="CreateForm.Id">
+            <input type="hidden" asp-for="CreateForm.AppUserId">
+            <input type="hidden" asp-for="CreateForm.PhotoId">
+            <input type="hidden" asp-for="CreateForm.CreatedDate">
+            <input type="hidden" asp-for="CreateForm.UpdatedDate">
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+    @if (Model.FormIsReadonly)
+    {
+        <div class="col-md-6">
+            <div id="ProfilePhotos" class="row clearfix" data-portfolioId="@Model.CreateForm.Id">
+                
+            </div>
+            <div class="row clearfix"><br /></div>
+            <form id="PhotoUploadForm">
+                <input type="file" name="files" id="files" multiple />
+                <input type="hidden" name="portfolioId" id="portfolioId" value="@Model.CreateForm.Id">
+            </form>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        var domain = document.location.protocol + '//' + document.location.host;
+
+
+        $.fn.loadPhotosAjax = function () {
+            var $this = $(this);
+            var portfolioId = $this.attr('data-portfolioId');
+            var ajaxUrl = `${domain}/Members/Portfolio/GetPhotosAjax`;
+
+            $this.empty();
+
+            $.ajax({
+                type: "get",
+                url: ajaxUrl,
+                data: { 'portfolioId': portfolioId }
+            }).done(function (response) {
+
+                if (!response || response.length < 1)
+                    $this.html('<p>No photos uploaded yet.</p>');
+
+                $.each(response, function (index, data) {
+                    var imagePath = `${domain}/media/upload/${data.directoryName}/${data.name}`;
+                    var $image = $('<img/>').attr('src', imagePath).attr('alt', data.title).addClass('img-fluid photo');
+
+                    var $imageHolder = $('<div>/').addClass('col-4 photo-container');
+                    var $deleteBtn = $('<button>/').addClass('btn btn-delete-photo');
+                    var $deleteIcon = $('<i>/').addClass('far fa-times-circle');
+                    $deleteBtn.append($deleteIcon);
+                    $deleteBtn
+                        .attr('type', 'button')
+                        .attr('data-photoId', data.id)
+                        .attr('data-name', data.name)
+                        .attr('data-directory', data.directoryName)
+                        .click();
+                    $imageHolder.append($image).append($deleteBtn).appendTo($this);
+
+                    if (index >= 5) {
+                        $('#PhotoUploadForm').hide();
+                    }
+                });
+
+                // Photo gallery
+
+            }).fail(function (xhr) {
+                $this.html('<p>No photos found, there might be some error occur please contact website administrator.</p>');
+            });
+        }
+
+        var uploadPhotosAjax = function (data) {
+
+            var ajaxUrl = `${domain}/Members/Portfolio/UploadPhotosAjax`;
+            $.ajax({
+                type: "post",
+                url: ajaxUrl,
+                data: data,
+                enctype: 'multipart/form-data',
+                processData: false,  // Important!
+                contentType: false,
+                cache: false
+            }).done(function (response) {
+                $('#ProfilePhotos').loadPhotosAjax();
+            }).fail(function (xhr) {
+                console.log(xhr);
+            });
+        }
+
+        var deletePhotosAjax = function (data) {
+
+            var ajaxUrl = `${domain}/Members/Portfolio/DeletePhotoAjax`;
+            $.ajax({
+                type: "delete",
+                url: ajaxUrl,
+                data: data
+            }).done(function (response) {
+                if (response)
+                    $('#ProfilePhotos').loadPhotosAjax();
+                else
+                    alert('Some error occur while deleting the photo, please try again');
+            }).fail(function (xhr) {
+                alert('Some error occur while deleting the photo, please try again');
+            });
+        }
+
+        $(document).ready(function () {
+            $("#CreateForm_PortfolioTypeId").change(function () {
+                var $this = $(this);
+                var selectedOptionText = $this[0].selectedOptions[0].text;
+                var $profileNameDiv = $('.profilename');
+
+                if (selectedOptionText == 'Myself') {
+                    $profileNameDiv.addClass("hide").removeClass("show");
+                } else {
+                    $profileNameDiv.addClass("show").removeClass("hide");
+                }
+            });
+
+            $('.edit-btn').on('click', function () {
+                var $this = $(this);
+                var $siblingControl = $this.siblings('.form-control');
+                $siblingControl.removeAttr('disabled');
+                console.log($siblingControl);
+            });
+
+            $('#memberbirthdate').datetimepicker();
+
+            // Load photos
+            $('#ProfilePhotos').loadPhotosAjax();
+
+            // Upload photo
+            $('#files').on('change', function () {
+                event.preventDefault();
+
+                var form = $('#PhotoUploadForm')[0];
+                var data = new FormData(form);
+
+                uploadPhotosAjax(data);
+                return false;
+            });
+
+        });
+
+        $(document).on('click', ".btn-delete-photo", function () {
+            var result = confirm("Do you really want to delete this?");
+            if (!result)
+                return false;
+
+            var $this = $(this);
+            var data = {
+                'photoId': $this.attr('data-photoId'),
+                'name': $this.attr('data-name'),
+                'directory': $this.attr('data-directory')
+            };
+
+            deletePhotosAjax(data);
+        });
+    </script>
+}
+

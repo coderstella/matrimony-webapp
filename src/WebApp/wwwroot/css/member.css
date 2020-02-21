@@ -1,0 +1,60 @@
+﻿/* ------------------------ Members css -------------------------- */
+body {
+    margin: 0;
+    padding: 0;
+}
+.gj-textbox-md {
+    border: none;
+}
+.gj-textbox-md {
+    border-bottom: none;
+}
+.gj-datepicker-md [role=right-icon] {
+    margin-top: 10px;
+    margin-right: 155px;
+}
+
+.hide {
+    display: none;
+}
+.show {
+    display: block;
+}
+.date {
+    position: relative;
+}
+.photo-container {
+    position: relative;
+}
+.photo {
+    opacity: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: .5s ease;
+    backface-visibility: hidden;
+}
+.btn-delete-photo {
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    color: #ff0000;
+    top: 0;
+    right: 0;
+    bottom: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 12px;
+    margin-right: -13px;
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+.photo-container:hover .img {    
+    opacity: 0.3;
+}
+
+.photo-container:hover .btn-delete-photo {
+    opacity: 1;
+    color: #ff0000;
+}
+
+

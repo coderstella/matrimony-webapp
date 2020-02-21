@@ -1,0 +1,147 @@
+﻿@model WebApp.Areas.Members.ViewModels.Dashboard.Pages.DashboardViewModel
+@{
+    ViewData["Title"] = "List of Portfolios";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+
+    var pageTitle = ViewData["pageTitle"];
+    var userPortfolioId = Model.CurrentUserDetails.Portfolios.FirstOrDefault().Id;
+}
+
+<h1>@pageTitle</h1>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="container">
+                <div class="row">
+                    @if (Model.CurrentUserDetails.Portfolios != null)
+                    {
+                        <div class="current-user-det-box">
+                            <div class="current-user-item">
+                                <div class="user-photo">
+                                    
+                                </div>
+                                <div class="user-details">
+                                    <h3>@Model.CurrentUserDetails.Portfolios.FirstOrDefault().FullName</h3>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7 portfolios-list">
+            @if (Model.PortfolioDetails != null)
+            {
+                var counter = 1;
+                <div class="container">
+                    <div class="row clearfix">
+                        @foreach (var portfolio in Model.PortfolioDetails)
+                        {
+                            <div class="col-md-12 portfolio-item-box">
+                                <div class="portfolio-item">
+                                    <div class="row">
+                                        <div class="profile-img col-sm-3 col-md-3">
+                                            @if (portfolio.Photos != null && portfolio.Photos.Count() > 0)
+                                            {
+                                                @foreach (var photo in portfolio.Photos.Take(1))
+                                                {
+                                                    <img src="~/media/upload/@photo.DirectoryName/@photo.Name?w=150&h=150&mode=crop" alt="@photo.Title" />
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <img class="img-fluid" src="~/images/image-not-available.jpg?w=150&h=150&mode=crop" alt="No Photo" />
+                                            }
+                                        </div>
+                                        <div class="profile-info col-sm-9 col-md-9">
+                                            <div class="profile-name col-sm-12 col-md-12">
+                                                <span class="info-name">Name -</span> <h5>@portfolio.FullName</h5>
+                                            </div>
+                                            <div class="details-box col-sm-12 col-md-12">
+                                                <div class="first col-sm-8 col-md-8">
+                                                    <div class="row">
+                                                        <div class="details">
+                                                            @if (portfolio.BirthDate != null)
+                                                            {
+                                                                var today = DateTime.Today;
+                                                                var age = today.Year - portfolio.BirthDate.Year;
+                                                                if (portfolio.BirthDate > today.AddYears(-age))
+                                                                {
+                                                                    age--;
+                                                                }
+                                                                <span class="info-title">Age -</span> <span>@age</span><br />
+                                                            }
+                                                            <span class="info-title">Profession -</span> <span>@portfolio.Profession</span><br />
+                                                            <span class="info-title">Location -</span> <span>@portfolio.Location</span><br />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="last col-sm-4 col-md-4">
+                                                    <div class="row">
+                                                        <div class="profile-links">
+                                                            @if (!portfolio.IsRequested)
+                                                            {
+                                                                <form method="post" id="@Html.Raw("MemberInterestForm" + counter)" class="form-horizontal">
+                                                                    <input type="hidden" id="fromId" name="FromId" value="@userPortfolioId" />
+                                                                    <input type="hidden" id="toId" name="ToId" value="@portfolio.Id" />
+                                                                    <input type="hidden" id="createdDate" name="CreatedDate" value="@DateTime.Now" />
+                                                                    <input type="hidden" id="updatedDate" name="UpdatedDate" value="@DateTime.Now" />
+                                                                    <button class="btn profile-btn text-center">I'm Interested!</button>
+                                                                </form>
+                                                            }
+                                                            <i class="far fa-heart" aria-hidden="true"></i> <span class="link-list">ShortList</span><br />
+                                                            <div id="blockButton"><i class="far fa-ban" aria-hidden="true"></i> <span class="link-list">Block</span></div><br />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        counter = counter + 1;
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p>No portfolio added in database yet, please add portfolio from <a asp-area="Members" asp-controller="Portfolio" asp-action="Index">here</a>.</p>
+            }
+        </div>
+        <div class="col-md-3">
+            <div class="advertisement-box">
+                <div class="advertisement-item">Advertisement box</div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            var domain = document.location.protocol + '//' + document.location.host;
+
+            $('.form-horizontal').submit(function (event) {
+                var $this = $(this);
+                var serializedForm = $this.serialize();
+
+                var ajaxUrl = `${domain}/Members/Dashboard/AddInterestAjax`;
+
+                $.ajax({
+                    type: "post",
+                    url: ajaxUrl,
+                    data: serializedForm                    
+                }).done(function (response) {
+                    console.log(response);
+                }).fail(function (xhr) {
+                    alert('Some error occur while interest request, please try again');
+                });
+            });
+
+        });
+
+    </script>
+}
