@@ -29,7 +29,11 @@ namespace WebApp.Data.Repository
             {
                 List<string> ids = new List<string>();
 
-                var result = await _context.MemberInterests.Where(d => d.FromId == currentPortfolioId).ToListAsync();
+                Guid tempGuid;
+                if (!Guid.TryParse(currentPortfolioId, out tempGuid))
+                    return null;
+
+                var result = await _context.MemberInterests.Where(d => d.FromId == tempGuid).ToListAsync();
                 foreach(var row in result)
                 {
                     ids.Add(row.ToId.ToString());

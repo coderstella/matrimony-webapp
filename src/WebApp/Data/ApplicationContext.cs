@@ -21,17 +21,24 @@ namespace WebApp.Data
 
         public DbSet<MemberInterest> MemberInterests { get; set; }
 
-        //protected override void OnModelCreating(ModelBuilder modelBuilder) 
-        //{
-        //    base.OnModelCreating(modelBuilder);
-
-        //    modelBuilder.Entity<MemberInterest>()
-        //        .HasOne(mi => );
-
-        //}
-
         public ApplicationContext(DbContextOptions options) : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<MemberInterest>()
+                .HasOne(mi => mi.FromPortfolio)
+                .WithMany(p => p.ToMemberInterests)
+                .HasForeignKey(mi => mi.FromId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MemberInterest>()
+                .HasOne(mi => mi.ToPortfolio)
+                .WithMany(p => p.FromMemberInterests)
+                .HasForeignKey(mi => mi.ToId);
         }
     }
 }

@@ -22,13 +22,11 @@ namespace WebApp.Areas.Members.Controllers
     {
         private readonly IDashboardService _dashboardService;
         private readonly IUserService _userService;
-        private readonly IMemberInterestService _memberInterestService;
         private readonly ILogger<DashboardController> _logger;
-        public DashboardController(IDashboardService dashboardService, IUserService userService, IMemberInterestService memberInterestService, ILogger<DashboardController> logger)
+        public DashboardController(IDashboardService dashboardService, IUserService userService, ILogger<DashboardController> logger)
         {
             _dashboardService = dashboardService;
             _userService = userService;
-            _memberInterestService = memberInterestService;
             _logger = logger;
         }
         public IActionResult Index()

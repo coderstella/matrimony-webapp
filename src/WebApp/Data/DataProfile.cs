@@ -15,11 +15,11 @@ namespace WebApp.Data
     {
         public DataProfile() 
         {
-            CreateMap<PortfolioFormViewModel, Portfolio>().ReverseMap();
+            CreateMap<PortfolioFormViewModel, Portfolio>().ReverseMap(); // For Protfolio user form
 
-            CreateMap<PortfolioDetailsDto, Portfolio>().ReverseMap();
+            CreateMap<PortfolioDetailsDto, Portfolio>().ReverseMap(); // For Protfolio index page
 
-            CreateMap<PortfolioUserDetailsDto, Portfolio>().ReverseMap();
+            CreateMap<PortfolioUserDetailsDto, Portfolio>().ReverseMap(); // For Dashboard index page
 
             CreateMap<PortfolioTypeDto, PortfolioType>().ReverseMap();
 
@@ -30,6 +30,8 @@ namespace WebApp.Data
             CreateMap<PhotoDto, Photo>().ReverseMap();
 
             CreateMap<MemberInterestDto, MemberInterest>().ReverseMap();
+
+
         }
     }
 }

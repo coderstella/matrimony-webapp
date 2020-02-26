@@ -82,12 +82,12 @@
                                                         <div class="profile-links">
                                                             @if (!portfolio.IsRequested)
                                                             {
-                                                                <form method="post" id="@Html.Raw("MemberInterestForm" + counter)" class="form-horizontal">
+                                                                <form method="post" class="form-horizontal">
                                                                     <input type="hidden" id="fromId" name="FromId" value="@userPortfolioId" />
                                                                     <input type="hidden" id="toId" name="ToId" value="@portfolio.Id" />
                                                                     <input type="hidden" id="createdDate" name="CreatedDate" value="@DateTime.Now" />
                                                                     <input type="hidden" id="updatedDate" name="UpdatedDate" value="@DateTime.Now" />
-                                                                    <button class="btn profile-btn text-center">I'm Interested!</button>
+                                                                    <input id="MemberInterestForm" class="btn profile-btn text-center" onclick='alert("Are you interest?")' type="submit" value="I'm Interested!" />
                                                                 </form>
                                                             }
                                                             <i class="far fa-heart" aria-hidden="true"></i> <span class="link-list">ShortList</span><br />
@@ -125,6 +125,7 @@
             var domain = document.location.protocol + '//' + document.location.host;
 
             $('.form-horizontal').submit(function (event) {
+                event.preventDefault();
                 var $this = $(this);
                 var serializedForm = $this.serialize();
 
@@ -138,9 +139,12 @@
                     console.log(response);
                 }).fail(function (xhr) {
                     alert('Some error occur while interest request, please try again');
-                });
+                })
             });
 
+            $("#MemberInterestForm").click(function () {
+                $("#MemberInterestForm").hide();
+            });
         });
 
     </script>

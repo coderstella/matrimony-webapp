@@ -7,7 +7,10 @@ namespace WebApp.Data.Entities
 {
     public class MemberInterest : BaseEntity
     {
-        public string FromId { get; set; }
-        public string ToId { get; set; }
+        public Guid FromId { get; set; }
+        public virtual Portfolio FromPortfolio { get; set; }
+
+        public Guid ToId { get; set; }
+        public virtual Portfolio ToPortfolio { get; set; }
     }
 }
