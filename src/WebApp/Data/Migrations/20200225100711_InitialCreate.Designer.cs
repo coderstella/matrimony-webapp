@@ -10,7 +10,7 @@ using WebApp.Data;
 namespace WebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20200206105937_InitialCreate")]
+    [Migration("20200225100711_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -229,16 +229,20 @@ namespace WebApp.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FromId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("FromId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ToId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("ToId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FromId");
+
+                    b.HasIndex("ToId");
 
                     b.ToTable("MemberInterests");
                 });
@@ -380,6 +384,21 @@ namespace WebApp.Data.Migrations
                     b.HasOne("WebApp.Data.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApp.Data.Entities.MemberInterest", b =>
+                {
+                    b.HasOne("WebApp.Data.Entities.Portfolio", "FromPortfolio")
+                        .WithMany("ToMemberInterests")
+                        .HasForeignKey("FromId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebApp.Data.Entities.Portfolio", "ToPortfolio")
+                        .WithMany("FromMemberInterests")
+                        .HasForeignKey("ToId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -11,5 +11,6 @@ namespace WebApp.Areas.Members.ViewModels.Dashboard.Pages
     {
         public IEnumerable<PortfolioUserDetailsDto> PortfolioDetails { get; set; }        
         public UserDeatailsDto CurrentUserDetails { get; set; }
+        public bool IsRequested { get; set; }
     }
 }

@@ -24,7 +24,7 @@ namespace WebApp.Data.Entities
         public Guid PhotoId { get; set; }
         public IEnumerable<Photo> Photos { get; set; }
 
-        //public virtual IEnumerable<MemberInterest> FromMemberInterests { get; set; }
-        //public virtual IEnumerable<MemberInterest> ToMemberInterests { get; set; }
+        public virtual ICollection<MemberInterest> ToMemberInterests { get; set; }
+        public virtual ICollection<MemberInterest> FromMemberInterests { get; set; }
     }
 }

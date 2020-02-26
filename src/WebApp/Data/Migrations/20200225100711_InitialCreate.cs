@@ -48,21 +48,6 @@ namespace WebApp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MemberInterests",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false),
-                    FromId = table.Column<string>(nullable: true),
-                    ToId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MemberInterests", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PortfolioTypes",
                 columns: table => new
                 {
@@ -214,6 +199,33 @@ namespace WebApp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MemberInterests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    FromId = table.Column<Guid>(nullable: false),
+                    ToId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberInterests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MemberInterests_Portfolios_FromId",
+                        column: x => x.FromId,
+                        principalTable: "Portfolios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MemberInterests_Portfolios_ToId",
+                        column: x => x.ToId,
+                        principalTable: "Portfolios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Photos",
                 columns: table => new
                 {
@@ -274,6 +286,16 @@ namespace WebApp.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MemberInterests_FromId",
+                table: "MemberInterests",
+                column: "FromId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MemberInterests_ToId",
+                table: "MemberInterests",
+                column: "ToId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Photos_PortfolioId",
