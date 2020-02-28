@@ -9,7 +9,7 @@ namespace WebApp.Areas.Members.ViewModels.Dashboard.Pages
 {
     public class DashboardViewModel
     {
-        public IEnumerable<PortfolioUserDetailsDto> PortfolioDetails { get; set; }        
+        public ICollection<PortfolioUserDetailsDto> SuggestedProfiles { get; set; }        
         public UserDeatailsDto CurrentUserDetails { get; set; }
         public bool IsRequested { get; set; }
     }

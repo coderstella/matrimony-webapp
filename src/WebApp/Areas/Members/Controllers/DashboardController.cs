@@ -13,6 +13,7 @@ using System.Net;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using WebApp.Dtos;
+using System.Collections;
 
 namespace WebApp.Areas.Members.Controllers
 {
@@ -31,17 +32,28 @@ namespace WebApp.Areas.Members.Controllers
         }
         public IActionResult Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var currentUser = _userService.GetByUserId(userId).Result;
-            var currentUserProfile = currentUser.Portfolios.FirstOrDefault();
-            var portfolioList = _dashboardService.GetAllAsync(currentUserProfile.Id, currentUserProfile.Gender).Result;
-
-            var viewModel = new DashboardViewModel()
+            try
             {
-                PortfolioDetails = portfolioList,
-                CurrentUserDetails = currentUser
-            };
-            return View(viewModel);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var currentUser = _userService.GetByUserId(userId).Result;
+                var currentUserProfile = currentUser.Portfolios.FirstOrDefault();
+
+                List<PortfolioUserDetailsDto> portfolioList = new List<PortfolioUserDetailsDto>();
+
+                if (currentUserProfile != null)
+                       portfolioList = _dashboardService.GetAllAsync(currentUserProfile.Id, currentUserProfile.Gender).Result.ToList();
+
+                var viewModel = new DashboardViewModel()
+                {
+                    SuggestedProfiles = portfolioList,
+                    CurrentUserDetails = currentUser
+                };
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {                
+                throw new Exception(ex.Message);
+            }            
         }
 
         //Member Interest Ajax

@@ -35,7 +35,6 @@ namespace WebApp.Data.Repository
                 _logger.LogError(string.Format("Exception occur in portfolio while getting list of portfolios: {0} at {1}", ex.Message, DateTime.UtcNow));
                 throw new Exception(ex.Message);
             }
-
         }
 
         public async Task<IEnumerable<Portfolio>> GetByUserGender(string currentUserGender)
@@ -75,6 +74,15 @@ namespace WebApp.Data.Repository
         public async Task<Portfolio> GetOneAsync(string id)
         {
             var portfolio = await _context.Portfolios.FindAsync(Guid.Parse(id));
+            if (portfolio != null)
+                return portfolio;
+
+            return null;
+        }
+
+        public async Task<Portfolio> GetSingleById(string id)
+        {
+            var portfolio = await _context.Portfolios.SingleOrDefaultAsync(p => p.Id == Guid.Parse(id));
             if (portfolio != null)
                 return portfolio;
 
