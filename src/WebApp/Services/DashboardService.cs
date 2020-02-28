@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,6 +49,23 @@ namespace WebApp.Services
             catch (Exception ex)
             {
                 _logger.LogError(string.Format("Exception occur while getting all portfolios list: {0} at {1}", ex.Message, DateTime.UtcNow));
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<PortfolioUserDetailsDto>> GetByCurrentUserId(string userId)
+        {
+            try
+            {
+                var portfolios = await _portfolioRepository.GetByUserId(userId);
+                if (portfolios == null)
+                    return null;
+
+                 return _mapper.Map<IEnumerable<PortfolioUserDetailsDto>>(portfolios);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(string.Format("Exception occur while getting all portfolios list by user id: {0} at {1}", ex.Message, DateTime.UtcNow));
                 throw new Exception(ex.Message);
             }
         }

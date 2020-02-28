@@ -9,6 +9,7 @@ using WebApp.Data;
 using WebApp.Data.Entities;
 using WebApp.Data.Interfaces;
 using WebApp.Data.Repository;
+using WebApp.Data.Resolvers;
 using WebApp.Handlers;
 using WebApp.Services;
 using WebApp.Services.Interfaces;
@@ -35,6 +36,7 @@ namespace WebApp
 
             // Extensions
             builder.RegisterType<FileHandler>().As<IFileHandler>().InstancePerLifetimeScope();
+            
         }
     }
 }

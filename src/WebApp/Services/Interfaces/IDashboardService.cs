@@ -9,6 +9,7 @@ namespace WebApp.Services.Interfaces
     public interface IDashboardService
     {
         Task<IEnumerable<PortfolioUserDetailsDto>> GetAllAsync(string currentUserProfileId, string currentUserGender);
+        Task<IEnumerable<PortfolioUserDetailsDto>> GetByCurrentUserId(string userId);
         Task<string> AddInterestAsync(MemberInterestDto interest);
     }
 }

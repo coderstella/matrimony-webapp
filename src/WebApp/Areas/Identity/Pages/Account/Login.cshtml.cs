@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using WebApp.Data.Entities;
+using WebApp.Data.Interfaces;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
@@ -22,16 +23,19 @@ namespace WebApp.Areas.Identity.Pages.Account
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IPortfolioRepository _portfolioRepository;
 
         public LoginModel(SignInManager<AppUser> signInManager, 
             ILogger<LoginModel> logger,
             UserManager<AppUser> userManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IPortfolioRepository portfolioRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _portfolioRepository = portfolioRepository;
         }
 
         [BindProperty]
@@ -58,12 +62,22 @@ namespace WebApp.Areas.Identity.Pages.Account
             public bool RememberMe { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task OnGetAsync(string userId, string returnUrl = null)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
+
+            //var currentUserId = await _portfolioRepository.GetByUserId(userId);
+            //if (currentUserId == null)
+            //{
+            //    returnUrl = returnUrl ?? Url.Content("~/Members/Portfolio");
+            //}
+            //else
+            //{
+            //    returnUrl = returnUrl ?? Url.Content("~/Members/Dashboard");
+            //}
 
             returnUrl = returnUrl ?? Url.Content("~/Members/Dashboard");
 
@@ -75,10 +89,19 @@ namespace WebApp.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string userId, string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/Members/Dashboard");
+            //var currentUserId = await _portfolioRepository.GetByUserId(userId);
+            //if (currentUserId == null)
+            //{
+            //    returnUrl = returnUrl ?? Url.Content("~/Members/Portfolio");
+            //}
+            //else
+            //{
+            //    returnUrl = returnUrl ?? Url.Content("~/Members/Dashboard");
+            //}
 
+            returnUrl = returnUrl ?? Url.Content("~/Members/Dashboard");
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout

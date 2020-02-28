@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Data.Entities;
+using WebApp.Data.Resolvers;
 
 namespace WebApp.Data
 {
@@ -14,8 +15,12 @@ namespace WebApp.Data
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<PortfolioInterestResolver>().AsSelf();
+
             builder.Register(context => 
             {
+
+
                 var profiles = context.Resolve<IEnumerable<Profile>>();
 
                 var config = new MapperConfiguration(x =>

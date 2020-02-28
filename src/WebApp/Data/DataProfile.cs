@@ -7,6 +7,7 @@ using WebApp.Areas.Members.ViewModels.Dashboard.Pages;
 using WebApp.Areas.Members.ViewModels.Portfolio.Forms;
 using WebApp.Areas.Members.ViewModels.Portfolio.Pages;
 using WebApp.Data.Entities;
+using WebApp.Data.Resolvers;
 using WebApp.Dtos;
 
 namespace WebApp.Data
@@ -20,6 +21,9 @@ namespace WebApp.Data
             CreateMap<PortfolioDetailsDto, Portfolio>().ReverseMap(); // For Protfolio index page
 
             CreateMap<PortfolioUserDetailsDto, Portfolio>().ReverseMap(); // For Dashboard index page
+
+            //CreateMap<Portfolio, PortfolioUserDetailsDto>();
+                //.ForMember(dest => dest.IsRequested, opt => opt.MapFrom<PortfolioInterestResolver>());
 
             CreateMap<PortfolioTypeDto, PortfolioType>().ReverseMap();
 

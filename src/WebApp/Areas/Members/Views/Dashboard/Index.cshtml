@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_MemberLayout.cshtml";
 
     var pageTitle = ViewData["pageTitle"];
-    var userPortfolioId = Model.CurrentUserDetails.Portfolios.FirstOrDefault().Id;
+    //var userPortfolioId = Model.CurrentUserDetails.Portfolios.FirstOrDefault().Id;
 }
 
 <h1>@pageTitle</h1>
@@ -22,7 +22,7 @@
                                     
                                 </div>
                                 <div class="user-details">
-                                    <h3>@Model.CurrentUserDetails.Portfolios.FirstOrDefault().FullName</h3>
+                                    @*<h3>@Model.CurrentUserDetails.Portfolios.FirstOrDefault().FullName</h3>*@
                                 </div>
                             </div>
                         </div>
@@ -31,12 +31,12 @@
             </div>
         </div>
         <div class="col-md-7 portfolios-list">
-            @if (Model.PortfolioDetails != null)
+            @if (Model.SuggestedProfiles != null)
             {
                 var counter = 1;
                 <div class="container">
                     <div class="row clearfix">
-                        @foreach (var portfolio in Model.PortfolioDetails)
+                        @foreach (var portfolio in Model.SuggestedProfiles)
                         {
                             <div class="col-md-12 portfolio-item-box">
                                 <div class="portfolio-item">
@@ -83,7 +83,7 @@
                                                             @if (!portfolio.IsRequested)
                                                             {
                                                                 <form method="post" class="form-horizontal">
-                                                                    <input type="hidden" id="fromId" name="FromId" value="@userPortfolioId" />
+                                                                    @*<input type="hidden" id="fromId" name="FromId" value="@userPortfolioId" />*@
                                                                     <input type="hidden" id="toId" name="ToId" value="@portfolio.Id" />
                                                                     <input type="hidden" id="createdDate" name="CreatedDate" value="@DateTime.Now" />
                                                                     <input type="hidden" id="updatedDate" name="UpdatedDate" value="@DateTime.Now" />
@@ -108,7 +108,7 @@
             }
             else
             {
-                <p>No portfolio added in database yet, please add portfolio from <a asp-area="Members" asp-controller="Portfolio" asp-action="Index">here</a>.</p>
+                <p>There are no suggestion for you, <a asp-area="Members" asp-controller="Portfolio" asp-action="Index">Click Here</a> to update your profile.</p>
             }
         </div>
         <div class="col-md-3">
