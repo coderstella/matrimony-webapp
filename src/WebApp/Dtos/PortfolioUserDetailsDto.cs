@@ -17,9 +17,9 @@ namespace WebApp.Dtos
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
         public bool IsRequested { get; set; }
+        public int Age { get; set; }
         public string AppUserId { get; set; }
         public Guid PortfolioTypeId { get; set; }
-        public Guid PhotoId { get; set; }
-        public IEnumerable<PhotoDto> Photos { get; set; }
+        public List<PhotoDto> Photos { get; set; }
     }
 }

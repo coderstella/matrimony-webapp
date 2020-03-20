@@ -1,0 +1,93 @@
+﻿.portfolio-form {
+    margin: 0;
+    padding: 0 15px;
+
+    .portfolio-wrapper {
+        margin: 0;
+        padding: 0;
+
+        .hide {
+            display: none;
+        }
+
+        .show {
+            display: block;
+        }
+
+        .date {
+            position: relative;
+        }
+
+        .dashboard-link {
+            margin-top: -35px;
+            margin-left: 135px;
+        }
+    }
+
+    .photo-wrapper {
+        .photo-container {
+            position: relative;
+
+            .photo {
+                opacity: 1;
+                display: block;
+                width: 100%;
+                height: auto;
+                transition: .5s ease;
+                backface-visibility: hidden;
+
+                &:hover .img {
+                    opacity: 0.3;
+                }
+            }
+
+            .btn-delete-photo {
+                transition: .5s ease;
+                opacity: 0;
+                position: absolute;
+                color: #ff0000;
+                font-size: 25px;
+                top: -9%;
+                right: 1%;
+                bottom: 80%;
+                transform: translate(-51%);
+                margin: 0;
+                -ms-transform: translate(-51%);
+                text-align: center;
+                padding: 0;
+
+                &:hover {
+                    opacity: 1;
+                    color: #ff0000;
+                }
+            }
+        }
+
+        .default-img {
+            background-image: url('../../../images/image-not-available.jpg');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 150px;
+            width: 150px;
+        }
+
+        .male {
+            background-image: url('../../../images/male.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 150px;
+            width: 150px;
+        }
+
+        .female {
+            background-image: url('../../../images/female.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 150px;
+            width: 150px;
+        }
+    }
+}

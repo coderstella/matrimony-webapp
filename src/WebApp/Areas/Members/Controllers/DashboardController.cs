@@ -36,7 +36,7 @@ namespace WebApp.Areas.Members.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var currentUser = _userService.GetByUserId(userId).Result;
-                var currentUserProfile = currentUser.Portfolios.FirstOrDefault();
+                var currentUserProfile = currentUser.Portfolio;
 
                 List<PortfolioUserDetailsDto> portfolioList = new List<PortfolioUserDetailsDto>();
 

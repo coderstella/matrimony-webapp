@@ -300,9 +300,6 @@ namespace WebApp.Data.Migrations
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PhotoId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("PortfolioTypeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -314,7 +311,9 @@ namespace WebApp.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
+                    b.HasIndex("AppUserId")
+                        .IsUnique()
+                        .HasFilter("[AppUserId] IS NOT NULL");
 
                     b.HasIndex("PortfolioTypeId");
 
@@ -413,8 +412,8 @@ namespace WebApp.Data.Migrations
             modelBuilder.Entity("WebApp.Data.Entities.Portfolio", b =>
                 {
                     b.HasOne("WebApp.Data.Entities.AppUser", "User")
-                        .WithMany("Portfolios")
-                        .HasForeignKey("AppUserId");
+                        .WithOne("Portfolio")
+                        .HasForeignKey("WebApp.Data.Entities.Portfolio", "AppUserId");
 
                     b.HasOne("WebApp.Data.Entities.PortfolioType", "PortfolioType")
                         .WithMany("Portfolios")

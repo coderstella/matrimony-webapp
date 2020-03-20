@@ -2,18 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using ImageResizer.AspNetCore.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using WebApp.Data;
+using WebApp.Data.Entities;
 using WebApp.Data.Extentions;
+using WebApp.Data.Interfaces;
+using WebApp.Data.Repository;
+using WebApp.Handlers;
+using WebApp.Services;
+using WebApp.Services.Interfaces;
 
 namespace WebApp
 {
@@ -25,28 +31,40 @@ namespace WebApp
         }
 
         public IConfiguration Configuration { get; }
-        public ILifetimeScope AutofacContainer { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Automapper Configuration 
+            services.AddAutoMapper(typeof(Startup));
             services.AddMvc();
             services.AddControllersWithViews();
 
             //AddImageResizer
             services.AddImageResizer();
 
+            // Register Repository
+            services.AddTransient<IPortfolioRepository, PortfolioRepository>();
+            services.AddTransient<IPortfolioTypeRepository, PortfolioTypeRepository>();
+            services.AddTransient<IPhotoRepository, PhotoRepository>();
+            services.AddTransient<IMemberInterestRepository, MemberInterestRepository>();
+
+            // Register Services
+            services.AddTransient<IPortfolioService, PortfolioService>();
+            services.AddTransient<IDashboardService, DashboardService>();
+            services.AddTransient<IUserService, UserService>();
+
+            // Extensions
+            services.AddTransient<IFileHandler, FileHandler>();
+
+            // Add local AppClaimsPrincipalFactory class to customize user
+            //services.AddScoped<IUserClaimsPrincipalFactory<AppUser>, ApplicationClaimsPrincipalFactory>();
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("AdminRights", policy => policy.RequireRole("Administrator"));
                 options.AddPolicy("MemberRights", policy => policy.RequireRole("Member", "Administrator"));
             });
-        }
-
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-            builder.RegisterModule(new MappingProfileModule());
-            builder.RegisterModule(new ApplicationModule());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,10 +80,6 @@ namespace WebApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            // If, for some reason, you need a reference to the built container, you
-            // can use the convenience extension method GetAutofacRoot.
-            this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 
             app.UseHttpsRedirection();            
             app.UseRouting();

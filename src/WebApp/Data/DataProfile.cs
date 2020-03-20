@@ -22,8 +22,9 @@ namespace WebApp.Data
 
             CreateMap<PortfolioUserDetailsDto, Portfolio>().ReverseMap(); // For Dashboard index page
 
-            //CreateMap<Portfolio, PortfolioUserDetailsDto>();
-                //.ForMember(dest => dest.IsRequested, opt => opt.MapFrom<PortfolioInterestResolver>());
+            CreateMap<Portfolio, PortfolioUserDetailsDto>()
+                .ForMember(dest => dest.IsRequested, opt => opt.MapFrom<PortfolioInterestResolver>())
+                .ForMember(dest => dest.Age, opt => opt.MapFrom<PortfolioAgeResolver>());
 
             CreateMap<PortfolioTypeDto, PortfolioType>().ReverseMap();
 

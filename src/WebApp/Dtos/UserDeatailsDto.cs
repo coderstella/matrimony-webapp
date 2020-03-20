@@ -12,6 +12,6 @@ namespace WebApp.Dtos
         public string UserName { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
-        public IEnumerable<PortfolioDetailsDto> Portfolios { get; set; }
+        public PortfolioDetailsDto Portfolio { get; set; }
     }
 }
