@@ -10,6 +10,7 @@ namespace WebApp.Data.Interfaces
     {
         Task<IEnumerable<string>> GetExistingInterest(string currentPortfolioId);
         Task<MemberInterest> GetIdAsync(string id);
+        Task<MemberInterest> CheckRequested(string fromId, string toId);
         Task<string> SaveAsync(MemberInterest memberInterest);
     }
 }

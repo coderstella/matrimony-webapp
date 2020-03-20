@@ -54,13 +54,13 @@ namespace WebApp.Data.Repository
             }
         }
 
-        public async Task<IEnumerable<Portfolio>> GetByUserId(string userId)
+        public async Task<Portfolio> GetByUserId(string userId)
         {
             try
             {
-                var portfolios = await _context.Portfolios.Where(p => p.AppUserId == userId).ToListAsync();
-                if (portfolios != null && portfolios.Count > 0)
-                    return portfolios;
+                var portfolio = await _context.Portfolios.Include(p => p.Photos).SingleOrDefaultAsync(p => p.AppUserId == userId);
+                if (portfolio != null)
+                    return portfolio;
 
                 return null;
             }

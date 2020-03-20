@@ -10,7 +10,8 @@ namespace WebApp.Services.Interfaces
     public interface IPortfolioService
     {
         Task<IEnumerable<PortfolioDetailsDto>> GetAllAsync();
-        Task<IEnumerable<PortfolioDetailsDto>> GetByUserId(string userId);
+        Task<PortfolioDetailsDto> GetByUserId(string userId);
+        Task<PortfolioDetailsDto> GetById(string id);
         Task<PortfolioFormViewModel> EditById(string id);
         Task<string> SavePortfolioAsync(PortfolioFormViewModel portfolioForm);
         Task<bool> UpdateAsync(PortfolioFormViewModel createForm);

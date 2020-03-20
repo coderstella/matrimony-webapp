@@ -47,13 +47,15 @@ namespace WebApp.Services
             }
         }
 
-        public async Task<IEnumerable<PortfolioDetailsDto>> GetByUserId(string userId)
+        public async Task<PortfolioDetailsDto> GetByUserId(string userId)
         {
             try
             {
-                var portfolios = await _portfolioRepository.GetByUserId(userId);
-                if (portfolios != null)
-                    return _mapper.Map<IEnumerable<PortfolioDetailsDto>>(portfolios);
+                var portfolio = await _portfolioRepository.GetByUserId(userId);
+                if (portfolio != null)
+                {                   
+                    return _mapper.Map<PortfolioDetailsDto>(portfolio);
+                }                    
 
                 return null;
             }

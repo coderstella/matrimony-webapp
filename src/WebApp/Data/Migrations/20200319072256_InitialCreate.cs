@@ -178,8 +178,7 @@ namespace WebApp.Data.Migrations
                     Profession = table.Column<string>(nullable: true),
                     Location = table.Column<string>(nullable: true),
                     AppUserId = table.Column<string>(nullable: true),
-                    PortfolioTypeId = table.Column<Guid>(nullable: false),
-                    PhotoId = table.Column<Guid>(nullable: false)
+                    PortfolioTypeId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -305,7 +304,9 @@ namespace WebApp.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Portfolios_AppUserId",
                 table: "Portfolios",
-                column: "AppUserId");
+                column: "AppUserId",
+                unique: true,
+                filter: "[AppUserId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Portfolios_PortfolioTypeId",

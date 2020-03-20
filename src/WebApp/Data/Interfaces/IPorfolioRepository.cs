@@ -10,7 +10,7 @@ namespace WebApp.Data.Interfaces
     {
         Task<IEnumerable<Portfolio>> GetAllAsync();
         Task<IEnumerable<Portfolio>> GetByUserGender(string currentUserGender);
-        Task<IEnumerable<Portfolio>> GetByUserId(string userId);
+        Task<Portfolio> GetByUserId(string userId);
         Task<Portfolio> GetOneAsync(string id);
         Task<Portfolio> GetSingleById(string id);
         Task<string> SaveAsync(Portfolio portfolio);

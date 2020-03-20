@@ -33,7 +33,7 @@ namespace WebApp.Services
         public async Task<UserDeatailsDto> GetByUserId(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            user.Portfolios = await _portfolioRepository.GetByUserId(user.Id);
+            user.Portfolio = await _portfolioRepository.GetByUserId(user.Id);
             
             if (user == null)
                 return null;

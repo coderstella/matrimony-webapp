@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Data.Entities;
+using WebApp.Dtos;
 
 namespace WebApp.Areas.Members.ViewModels.Portfolio.Forms
 {
@@ -32,6 +33,6 @@ namespace WebApp.Areas.Members.ViewModels.Portfolio.Forms
 
         public Guid PortfolioTypeId { get; set; }
 
-        public Guid PhotoId { get; set; }
+        public List<PhotoDto> Photos { get; set; }
     }
 }

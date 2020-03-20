@@ -22,13 +22,13 @@
     <div class="alert alert-success">@successMessage</div>
 }
 
-<div class="row">
-    <div class="@formColSize">
+<div class="row portfolio-form">
+    <div class="@formColSize portfolio-wrapper">
         <form asp-area="Members" asp-controller="Portfolio" asp-action="Save" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
             <div class="form-group">
                 <label class="control-label">Profile for</label>
                 <div class="input-group">
-                    <select asp-for="CreateForm.PortfolioTypeId" class="form-control col-md-10">
+                    <select asp-for="CreateForm.PortfolioTypeId" id="PortfolioTypeId" class="form-control col-md-10">
                         <option>- Select Profile -</option>
                         @foreach (var type in Model.PortfolioTypes)
                         {
@@ -38,17 +38,17 @@
                     <span asp-validation-for="CreateForm.PortfolioTypeId" class="text-danger"></span>
                 </div>
             </div>
-            <div class="form-group profilename @(string.IsNullOrWhiteSpace(Model.CreateForm.FullName) ? "hide" : "show")">
+            <div class="form-group profilename">
                 <label asp-for="CreateForm.FullName" class="control-label"></label>
                 <div class="input-group">
-                    <input asp-for="CreateForm.FullName" type="text" class="col-md-10 form-control" />
+                    <input id="FullName" asp-for="CreateForm.FullName" type="text" class="col-md-10 form-control" />
                     <span asp-validation-for="CreateForm.FullName" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label asp-for="CreateForm.Gender" class="control-label"></label>
                 <div class="input-group">
-                    <select asp-for="CreateForm.Gender" class="form-control col-md-10">
+                    <select asp-for="CreateForm.Gender" id="PortfolioGender" class="form-control col-md-10">
                         <option>- Select Profile -</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -66,41 +66,48 @@
             <div class="form-group">
                 <label asp-for="CreateForm.Profession" class="control-label"></label>
                 <div class="input-group date" data-target-input="nearest">
-                    <input asp-for="CreateForm.Profession" id="memberbirthdate" type="text" class="col-md-10 form-control" />
+                    <input asp-for="CreateForm.Profession" type="text" class="col-md-10 form-control" />
                     <span asp-validation-for="CreateForm.Profession" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label asp-for="CreateForm.Location" class="control-label"></label>
                 <div class="input-group date" data-target-input="nearest">
-                    <input asp-for="CreateForm.Location" id="memberbirthdate" type="text" class="col-md-10 form-control" />
+                    <input asp-for="CreateForm.Location" type="text" class="col-md-10 form-control" />
                     <span asp-validation-for="CreateForm.Location" class="text-danger"></span>
                 </div>
             </div>
 
             <input type="hidden" asp-for="CreateForm.Id">
             <input type="hidden" asp-for="CreateForm.AppUserId">
-            <input type="hidden" asp-for="CreateForm.PhotoId">
             <input type="hidden" asp-for="CreateForm.CreatedDate">
             <input type="hidden" asp-for="CreateForm.UpdatedDate">
 
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
+        @if (@Model.CreateForm.Id != null)
+        {
+            <div class="dashboard-link"><a asp-area="Members" asp-controller="Dashboard" asp-action="Index">Dashboard</a></div>
+        }
     </div>
     @if (Model.FormIsReadonly)
     {
-        <div class="col-md-6">
-            <div id="ProfilePhotos" class="row clearfix" data-portfolioId="@Model.CreateForm.Id">
-                
-            </div>
-            <div class="row clearfix"><br /></div>
+        <div class="col-md-6 photo-wrapper">            
+            @if (Model.CreateForm.Photos == null || Model.CreateForm.Photos.Count == 0)
+            {
+                <div class="col-4 default-img"></div>
+            }
+            else 
+            {   
+                <div id="ProfilePhotos" class="row clearfix" data-portfolioId="@Model.CreateForm.Id"></div>
+                <div class="row clearfix"><br /></div>
+            }
             <form id="PhotoUploadForm">
                 <input type="file" name="files" id="files" multiple />
                 <input type="hidden" name="portfolioId" id="portfolioId" value="@Model.CreateForm.Id">
             </form>
         </div>
     }
-
 </div>
 
 @section Scripts {
@@ -108,7 +115,6 @@
     <script>
 
         var domain = document.location.protocol + '//' + document.location.host;
-
 
         $.fn.loadPhotosAjax = function () {
             var $this = $(this);
@@ -122,9 +128,19 @@
                 url: ajaxUrl,
                 data: { 'portfolioId': portfolioId }
             }).done(function (response) {
+                
+                /*if (!response || response.length < 1)
+                    var defaultPath = `${domain}/images/male.png`;
+                    var defaultImg = $('<img/>').attr('src', defaultPath).addClass('img-fluid');
+                    var defaultImgHolder = $('<div/>').addClass('col-4');
+
+                    $defaultImgHolder.append($defaultImg).appendTo($this);
 
                 if (!response || response.length < 1)
-                    $this.html('<p>No photos uploaded yet.</p>');
+                    $this.html('<img src="https://localhost:44371/media/upload/1aedb8d9dc4751e229a335e371db8058/235319b2-27cd-44ba-abb2-7b39c461ee5efree_2420237.jpg">');
+
+                if (!response || response.length < 1)
+                    $this.html('<p>No photos uploaded yet.</p>');*/
 
                 $.each(response, function (index, data) {
                     var imagePath = `${domain}/media/upload/${data.directoryName}/${data.name}`;
@@ -141,6 +157,10 @@
                         .attr('data-directory', data.directoryName)
                         .click();
                     $imageHolder.append($image).append($deleteBtn).appendTo($this);
+
+                    if (index <= 1) {
+                       $('#PhotoUploadForm').html('<p><a href="#">Add more photos</a></p>');
+                    }
 
                     if (index >= 5) {
                         $('#PhotoUploadForm').hide();
@@ -189,19 +209,23 @@
             });
         }
 
-        $(document).ready(function () {
-            $("#CreateForm_PortfolioTypeId").change(function () {
-                var $this = $(this);
-                var selectedOptionText = $this[0].selectedOptions[0].text;
-                var $profileNameDiv = $('.profilename');
+        var getCurrentUserNameAjax = function () {
+           
+            var ajaxUrl = `${domain}/Members/Portfolio/GetCurrentUserNameAjax`;
 
-                if (selectedOptionText == 'Myself') {
-                    $profileNameDiv.addClass("hide").removeClass("show");
-                } else {
-                    $profileNameDiv.addClass("show").removeClass("hide");
-                }
+            $.ajax({
+                type: "get",
+                url: ajaxUrl
+            }).done(function (response) {
+                if (response != null)
+                    $('#FullName').val(response.fullName);
+                
+            }).fail(function (xhr) {
+                alert("Some error occur! please refresh browser and try again.");
             });
+        }
 
+        $(document).ready(function () {
             $('.edit-btn').on('click', function () {
                 var $this = $(this);
                 var $siblingControl = $this.siblings('.form-control');
@@ -225,7 +249,28 @@
                 return false;
             });
 
-        });
+            $("#PortfolioTypeId").on('change', function () {
+                var $this = $(this);
+                if ($this[0].selectedIndex == 1)
+                    getCurrentUserNameAjax();
+
+                if ($this[0].selectedIndex != 1)
+                    $('#FullName').val('');
+            });
+
+            /*
+             * // Gender default icons
+            $("#PortfolioGender").on('change', function () {
+                var $this = $(this);
+                var $profileNameDiv = $('.default-img');
+                if ($this[0].selectedIndex == 1) {
+                    $profileNameDiv.addClass("male").removeClass("female");
+                } else {
+                    $profileNameDiv.addClass("female").removeClass("male");
+                }
+            });
+            */
+        });            
 
         $(document).on('click', ".btn-delete-photo", function () {
             var result = confirm("Do you really want to delete this?");

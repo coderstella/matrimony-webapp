@@ -65,6 +65,22 @@ namespace WebApp.Data.Repository
                 throw new Exception(ex.Message);
             }
         }
+        public async Task<MemberInterest> CheckRequested(string fromId, string toId)
+        {
+            try
+            {
+                var result = await _context.MemberInterests.SingleOrDefaultAsync(d => d.FromId == Guid.Parse(fromId) && d.ToId == Guid.Parse(toId));
+                if (result != null)
+                    return result;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Exception occur while checking member interest: {0} at {1}", ex.Message, DateTime.UtcNow);
+                throw new Exception(ex.Message);
+            }
+        }
 
         public async Task<string> SaveAsync(MemberInterest memberInterest)
         {

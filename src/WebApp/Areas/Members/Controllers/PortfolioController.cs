@@ -26,17 +26,19 @@ namespace WebApp.Areas.Members.Controllers
         private readonly IPortfolioService _portfolioService;
         private readonly IFileHandler _fileHandler;
         private readonly ILogger<PortfolioController> _logger;
-        public PortfolioController(IPortfolioService portfolioService, IFileHandler fileHandler, ILogger<PortfolioController> logger)
+        private readonly IUserService _userService;
+        public PortfolioController(IPortfolioService portfolioService, IFileHandler fileHandler, ILogger<PortfolioController> logger, IUserService userService)
         {
             _portfolioService = portfolioService;
             _fileHandler = fileHandler;
             _logger = logger;
+            _userService = userService;
         }
 
         public IActionResult Index()
         {
             var currentUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var portfolios = _portfolioService.GetByUserId(currentUserId).Result;
+            var portfolio = _portfolioService.GetByUserId(currentUserId).Result;
             var portfolioTypes = _portfolioService.GetAllTypesAsync().Result;
             
             var isReadOnly = false;
@@ -49,21 +51,22 @@ namespace WebApp.Areas.Members.Controllers
                 UpdatedDate = DateTime.Now
             };
 
-            if(portfolios != null && portfolios.Any())
+            if(portfolio != null)
             {
-                createForm = portfolios.Select(p => new PortfolioFormViewModel
+                createForm = new PortfolioFormViewModel
                 {
-                    Id = p.Id,
-                    FullName = p.FullName,
-                    Gender = p.Gender,
-                    BirthDate = p.BirthDate,
-                    Profession = p.Profession,
-                    Location = p.Location,
-                    AppUserId = p.AppUserId,
-                    PortfolioTypeId = p.PortfolioTypeId,
-                    CreatedDate = p.CreatedDate,
-                    UpdatedDate = p.UpdatedDate,
-                }).FirstOrDefault();
+                    Id = portfolio.Id,
+                    FullName = portfolio.FullName,
+                    Gender = portfolio.Gender,
+                    BirthDate = portfolio.BirthDate,
+                    Profession = portfolio.Profession,
+                    Location = portfolio.Location,
+                    AppUserId = portfolio.AppUserId,
+                    PortfolioTypeId = portfolio.PortfolioTypeId,
+                    CreatedDate = portfolio.CreatedDate,
+                    UpdatedDate = portfolio.UpdatedDate,
+                    Photos = portfolio.Photos
+                };
 
                 isReadOnly = true;
             }
@@ -172,7 +175,7 @@ namespace WebApp.Areas.Members.Controllers
 
             var photos = _portfolioService.GetAllPhotosAsync(portfolioId).Result;
             if (photos == null)
-                return Ok();
+                return BadRequest();
 
             return Ok(photos);
         }
@@ -190,6 +193,21 @@ namespace WebApp.Areas.Members.Controllers
                 return Ok(isDeleted);
             }
             return Ok(false);
+        }
+
+        [HttpGet]
+        public IActionResult GetCurrentUserNameAjax()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = _userService.GetByUserId(userId).GetAwaiter().GetResult();
+            
+            if (user == null)
+                return BadRequest();
+
+            if(string.IsNullOrWhiteSpace(user.FullName))
+                return NotFound();
+
+            return Ok( new { FullName = user.FullName });
         }
     }
 }
